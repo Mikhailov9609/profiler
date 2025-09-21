@@ -26,10 +26,26 @@ class ProfileStatistic {
 
     public function generateReport(string $functionName = 'anonymous'): void
     {
-        $this->report[$functionName]['time'] = $this->timeMeasurement->getElapsedTimeMs();
-        $this->report[$functionName]['memory'] = $this->memoryMeasurement->getMemoryUsageMB();
-        $this->report[$functionName]['realMemory'] = $this->memoryMeasurement->getRealMemoryUsageMB();
-        $this->report[$functionName]['peakMemory'] = $this->memoryMeasurement->getPeakMemoryUsageMB();
+        $time = $this->timeMeasurement->getElapsedTimeMs();
+        $mem = $this->memoryMeasurement->getMemoryUsageMB();
+        $real = $this->memoryMeasurement->getRealMemoryUsageMB();
+        $peak = $this->memoryMeasurement->getPeakMemoryUsageMB();
+
+        if (!isset($this->report[$functionName])) {
+            $this->report[$functionName] = [
+                'time' => 0.0,
+                'memory' => 0.0,
+                'realMemory' => 0.0,
+                'peakMemory' => 0.0,
+                'totalCalls' => 0,
+            ];
+        }
+
+        $this->report[$functionName]['time'] += $time;
+        $this->report[$functionName]['memory'] += $mem;
+        $this->report[$functionName]['realMemory'] += $real;
+        // Пик берём как максимум по всем вызовам
+        $this->report[$functionName]['peakMemory'] = max($this->report[$functionName]['peakMemory'], $peak);
         $this->report[$functionName]['totalCalls'] = $this->functionCallCount->getCallCount($functionName);
     }
 

@@ -6,6 +6,8 @@ $profiler = new Profiler();
 $profiler->profile(function() {
     someFunction();
     anotherFunction();
+    usleep(2000000); // 0.2 секунды
+    anotherFunction();
 
 }, 'main');
 
